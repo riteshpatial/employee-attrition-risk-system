@@ -31,14 +31,25 @@ model = load_model()
 # ===============================
 st.sidebar.header("Upload Employee Dataset")
 uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
+st.sidebar.markdown("**— or —**")
+use_sample = st.sidebar.button("▶ Use Sample Data (Demo)", use_container_width=True)
 risk_threshold = st.sidebar.slider("High Risk Threshold", 0.3, 0.9, 0.6)
+
+if use_sample:
+    st.session_state["use_sample"] = True
+if uploaded_file:
+    st.session_state["use_sample"] = False
 
 # ===============================
 # MAIN
 # ===============================
-if uploaded_file:
+if uploaded_file or st.session_state.get("use_sample"):
 
-    df = pd.read_csv(uploaded_file)
+    if uploaded_file:
+        df = pd.read_csv(uploaded_file)
+    else:
+        df = pd.read_csv("Palo Alto Networks.csv")
+        st.info("Showing demo with sample dataset — Palo Alto Networks employee data.")
     st.success("Dataset uploaded successfully")
 
     st.subheader("Preview of Dataset")
@@ -181,4 +192,4 @@ if uploaded_file:
     )
 
 else:
-    st.info("Upload employee dataset to begin.")
+    st.info("Upload a CSV file or click **▶ Use Sample Data** in the sidebar to see the demo.")
